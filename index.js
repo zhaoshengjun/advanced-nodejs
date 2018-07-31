@@ -1,8 +1,9 @@
-function hideString(str) {
-  return str.replace(/[[a-zA-Z]/g, "X");
+function hideString(str, done) {
+  done(str.replace(/[[a-zA-Z]/g, "X"));
 }
 
-var hidden = hideString("Hello World");
+hideString("Hello World", hidden => {
+  console.log(hidden);
+});
 
-console.log(hidden);
 console.log("done");
