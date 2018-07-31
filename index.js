@@ -1,12 +1,10 @@
-function delay(seconds, callback) {
-  setTimeout(callback, seconds * 1000);
-}
+let delay = seconds =>
+  new Promise((resolve, reject) => {
+    setTimeout(resolve, seconds * 1000);
+  });
 
 console.log("Starting delay");
 
-delay(2, () => {
+delay(2).then(() => {
   console.log("2 seconds");
-  delay(1, () => {
-    console.log("3 seconds");
-  });
 });
