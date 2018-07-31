@@ -9,4 +9,5 @@ console.log("Starting delay");
 
 delay(2)
   .then(console.log)
-  .then(() => console.log("Hello world"));
+  .then(_ => 42)
+  .then(number => console.log(`Hello world, ${number}`));
