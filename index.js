@@ -6,4 +6,7 @@ console.log("Starting delay");
 
 delay(2, () => {
   console.log("2 seconds");
+  delay(1, () => {
+    console.log("3 seconds");
+  });
 });
