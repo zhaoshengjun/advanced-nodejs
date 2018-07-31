@@ -7,6 +7,4 @@ let delay = seconds =>
 
 console.log("Starting delay");
 
-delay(2).then(message => {
-  console.log(message);
-});
+delay(2).then(console.log);
