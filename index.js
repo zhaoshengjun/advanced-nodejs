@@ -1,3 +1,5 @@
+var { promisify } = require("util");
+
 let delay = (seconds, callback) =>
   new Promise((resolve, reject) => {
     if (seconds > 3) {
@@ -11,10 +13,8 @@ let delay = (seconds, callback) =>
 
 console.log("Starting delay");
 
-delay(2, (err, message) => {
-  if (err) {
-    console.log(err.message);
-  } else {
-    console.log(message);
-  }
-});
+var promiseDelay = promisify(delay);
+
+promiseDelay(5)
+  .then(console.log)
+  .catch(err => console.log(err.message));
