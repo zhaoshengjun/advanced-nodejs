@@ -1,19 +1,20 @@
-let delay = seconds =>
+let delay = (seconds, callback) =>
   new Promise((resolve, reject) => {
     if (seconds > 3) {
-      reject(new Error("it takes too long!"));
+      callback(new Error("it takes too long!"));
+    } else {
+      setTimeout(() => {
+        callback(null, "The long wait is over.");
+      }, seconds * 1000);
     }
-    setTimeout(() => {
-      resolve("The long wait is over.");
-    }, seconds * 1000);
   });
 
 console.log("Starting delay");
 
-delay(4)
-  .then(console.log)
-  .then(_ => 42)
-  .then(number => console.log(`Hello world, ${number}`))
-  .catch(err => {
+delay(2, (err, message) => {
+  if (err) {
     console.log(err.message);
-  });
+  } else {
+    console.log(message);
+  }
+});
