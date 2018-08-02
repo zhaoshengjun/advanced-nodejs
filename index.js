@@ -8,10 +8,6 @@ let unlink = promisify(fs.unlink);
 let delay = seconds =>
   new Promise((resolve, reject) => setTimeout(resolve, seconds * 1000));
 
-Promise.all([
-  writeFile("readme.md", "# Hello world"),
-  writeFile("readme.txt", " Hello world"),
-  writeFile("readme.json", '{" Hello":" world"}')
-])
-  .then(() => readdir(__dirname))
-  .then(console.log);
+Promise.all([delay(2), delay(3), delay(5), delay(4)]).then(() =>
+  console.log("done")
+);
