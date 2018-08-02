@@ -1,11 +1,17 @@
-var fs = require("fs");
-var { promisify } = require("util");
+let fs = require("fs");
+let { promisify } = require("util");
 
-var readdir = promisify(fs.readdir);
+let readdir = promisify(fs.readdir);
+let writeFile = promisify(fs.writeFile);
+let unlink = promisify(fs.unlink);
 
-async function start() {
-  var files = await readdir(__dirname);
-  console.log(files);
-}
+let delay = seconds =>
+  new Promise((resolve, reject) => setTimeout(resolve, seconds * 1000));
 
-start();
+Promise.all([
+  writeFile("readme.md", "# Hello world"),
+  writeFile("readme.txt", " Hello world"),
+  writeFile("readme.json", '{" Hello":" world"}')
+])
+  .then(() => readdir(__dirname))
+  .then(console.log);
