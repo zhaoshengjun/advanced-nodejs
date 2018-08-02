@@ -9,22 +9,18 @@ var delay = seconds =>
     setTimeout(res, seconds * 1000);
   });
 
-const doStuffSequentially = () =>
-  Promise.resolve()
-    .then(() => console.log("Starting"))
-    .then(() => delay(1))
-    .then(() => "waiting")
-    .then(console.log)
-    .then(() => delay(2))
-    .then(() => writeFile("file.txt", "Sample text ..."))
-    .then(beep)
-    .then(() => "file created")
-    .then(console.log)
-    .then(() => delay(3))
-    .then(() => unlink("file.txt"))
-    .then(beep)
-    .then(() => "file removed")
-    .then(console.log)
-    .catch(console.log);
+const doStuffSequentially = async () => {
+  console.log("starting");
+  await delay(1);
+  console.log("waiting");
+  await delay(2);
+  await writeFile("file.txt", "Sample file...");
+  beep();
+  console.log("file created");
+  await delay(3);
+  await unlink("file.txt");
+  beep();
+  console.log("file removed");
+};
 
 doStuffSequentially();
