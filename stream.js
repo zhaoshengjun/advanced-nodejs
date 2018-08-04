@@ -8,10 +8,9 @@ let file = "./test.mp3";
 
 http
   .createServer((req, res) => {
-    fs.readFile(file, (err, data) => {
-      if (err) console.log("hmmm: ", err.message);
-      res.writeHead(200, { "Content-Type": "audio/mp3" });
-      res.end(data);
-    });
+    res.writeHead(200, { "Content-Type": "audio/mp3" });
+    fs.createReadStream(file)
+      .pipe(res)
+      .on("error", console.error);
   })
-  .listen(3000, () => console.log("buffer - http://localhost:3000"));
+  .listen(3000, () => console.log("stream - http://localhost:3000"));
