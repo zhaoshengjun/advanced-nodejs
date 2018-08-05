@@ -15,4 +15,9 @@ readStream.on("error", error => {
 
 readStream.pause();
 
-process.stdin.on("data", chunk => readStream.read());
+process.stdin.on("data", chunk => {
+  if (chunk.toString().trim() === "finish") {
+    readStream.resume();
+  }
+  readStream.read();
+});
