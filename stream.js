@@ -1,35 +1,14 @@
-const { Readable } = require("stream");
-const peaks = [
-  "Tallac",
-  "Ralston",
-  "Rubicon",
-  "Twin Peaks",
-  "Castle Peak",
-  "Rose",
-  "Freel Peak"
-];
+const fs = require("fs");
 
-class StreamFromArray extends Readable {
-  constructor(array) {
-    super({ objectMode: true });
-    this.array = array;
-    this.index = 0;
-  }
+const readStream = fs.createReadStream("./test.mp3");
 
-  _read() {
-    if (this.index <= this.array.length) {
-      const chunk = {
-        data: this.array[this.index],
-        index: this.index
-      };
-      this.push(chunk);
-      this.index += 1;
-    } else {
-      this.push(null);
-    }
-  }
-}
+readStream.on("data", chunk => {
+  console.log("reading little chunk\n", chunk);
+});
 
-const peakStream = new StreamFromArray(peaks);
-peakStream.on("data", chunk => console.log(chunk));
-peakStream.on("end", () => console.log("Done!"));
+readStream.on("end", () => console.log("read stream finished"));
+
+readStream.on("error", error => {
+  console.log("an error has occured");
+  console.error(error.message);
+});
