@@ -1,16 +1,32 @@
-// no stream: use buffer, like use bucket to move things.
-// use stream: like use pipe to move things.
+const { Readable } = require("stream");
+const peaks = [
+  "Tallac",
+  "Ralston",
+  "Rubicon",
+  "Twin Peaks",
+  "Castle Peak",
+  "Rose",
+  "Freel Peak"
+];
 
-let fs = require("fs");
-let http = require("http");
+class StreamFromArray extends Readable {
+  constructor(array) {
+    super();
+    this.array = array;
+    this.index = 0;
+  }
 
-let file = "./test.mp3";
+  _read() {
+    if (this.index <= this.array.length) {
+      const chunk = this.array[this.index];
+      this.push(chunk);
+      this.index += 1;
+    } else {
+      this.push(null);
+    }
+  }
+}
 
-http
-  .createServer((req, res) => {
-    res.writeHead(200, { "Content-Type": "audio/mp3" });
-    fs.createReadStream(file)
-      .pipe(res)
-      .on("error", console.error);
-  })
-  .listen(3000, () => console.log("stream - http://localhost:3000"));
+const peakStream = new StreamFromArray(peaks);
+peakStream.on("data", chunk => console.log(chunk));
+peakStream.on("end", () => console.log("Done!"));
