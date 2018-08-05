@@ -3,7 +3,7 @@ const fs = require("fs");
 const readStream = fs.createReadStream("./test.mp3");
 
 readStream.on("data", chunk => {
-  console.log("reading little chunk\n", chunk);
+  console.log("reading little chunk\n", chunk.length);
 });
 
 readStream.on("end", () => console.log("read stream finished"));
