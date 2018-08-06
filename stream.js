@@ -1,23 +1,17 @@
-const fs = require("fs");
+const { createReadStream, createWriteStream } = require("fs");
 
-const readStream = fs.createReadStream("./test.mp3");
+const readStream = createReadStream("./test.mp3");
+const writeStream = createWriteStream("./copy.mp3");
 
 readStream.on("data", chunk => {
-  console.log("reading little chunk\n", chunk.length);
+  writeStream.write(chunk);
 });
 
-readStream.on("end", () => console.log("read stream finished"));
+readStream.on("end", () => writeStream.end());
 
 readStream.on("error", error => {
   console.log("an error has occured");
   console.error(error.message);
 });
 
-readStream.pause();
-
-process.stdin.on("data", chunk => {
-  if (chunk.toString().trim() === "finish") {
-    readStream.resume();
-  }
-  readStream.read();
-});
+writeStream.on("close", () => process.stdout.write("file copied!"));
