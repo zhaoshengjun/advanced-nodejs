@@ -1,7 +1,9 @@
 const { createReadStream, createWriteStream } = require("fs");
 
 const readStream = createReadStream("./test.mp3");
-const writeStream = createWriteStream("./copy.mp3");
+const writeStream = createWriteStream("./copy.mp3", {
+  highWaterMark: 1628920
+});
 
 readStream.on("data", chunk => {
   const result = writeStream.write(chunk);
