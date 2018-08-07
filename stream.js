@@ -1,36 +1,25 @@
-const { createReadStream, createWriteStream } = require("fs");
-const { PassThrough, Duplex } = require("stream");
+const { Transform } = require("stream");
 
-const readStream = createReadStream("./test.mp3");
-const writeStream = createWriteStream("./copy.mp3");
-
-class Throttle extends Duplex {
-  constructor(ms) {
+class ReplaceText extends Transform {
+  constructor(char) {
     super();
-    this.delay = ms;
+    this.replaceChar = char;
   }
 
-  _write(chunk, encoding, callback) {
-    this.push(chunk);
-    setTimeout(callback, this.delay);
+  _transform(chunk, encoding, callback) {
+    const transformChunk = chunk
+      .toString()
+      .replace(/[a-z]|[A-Z]|[0-9]/g, this.replaceChar);
+    this.push(transformChunk);
+    callback();
   }
 
-  _read() {}
-
-  _final() {
-    this.push(null);
+  _flush(callback) {
+    this.push("More stuff is being passed...");
+    callback();
   }
 }
 
-const report = new PassThrough();
-const throttle = new Throttle(100);
-let total = 0;
-report.on("data", chunk => {
-  total += chunk.length;
-  console.log("length: ", total);
-});
-readStream
-  .pipe(throttle)
-  .pipe(report)
-  .pipe(writeStream)
-  .on("error", console.error);
+var xStream = new ReplaceText("x");
+
+process.stdin.pipe(xStream).pipe(process.stdout);
