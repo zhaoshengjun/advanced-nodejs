@@ -6,9 +6,23 @@ const fileInfo = promisify(stat);
 
 createServer(async (req, res) => {
   const { size } = await fileInfo(file);
-  res.writeHead(200, {
-    "Content-Type": "audio/mp3",
-    "Content-Length": size
-  });
-  createReadStream(file).pipe(res);
+  const range = req.headers.range;
+  if (range) {
+    let [start, end] = range.replace(/bytes=/, "").split("-");
+    start = parseInt(start, 10);
+    end = end ? parseInt(end, 10) : size - 1;
+    res.writeHead(200, {
+      "Content-Range": `bytes ${start}-${end}/${size}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": end - start + 1,
+      "Content-Type": "audio/mp3"
+    });
+    createReadStream(file, { start, end }).pipe(res);
+  } else {
+    res.writeHead(200, {
+      "Content-Type": "audio/mp3",
+      "Content-Length": size
+    });
+    createReadStream(file).pipe(res);
+  }
 }).listen(3000, () => console.log("Server is running on port 3000"));
