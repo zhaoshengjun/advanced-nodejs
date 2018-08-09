@@ -4,7 +4,7 @@ const { promisify } = require("util");
 const file = "./test.mp3";
 const fileInfo = promisify(stat);
 
-createServer(async (req, res) => {
+const responseWithContent = async (req, res) => {
   const { size } = await fileInfo(file);
   const range = req.headers.range;
   if (range) {
@@ -24,5 +24,21 @@ createServer(async (req, res) => {
       "Content-Length": size
     });
     createReadStream(file).pipe(res);
+  }
+};
+
+createServer((req, res) => {
+  if (req.url === "/audio") {
+    responseWithContent(req, res);
+  } else {
+    res.writeHead(200, {
+      "Content-Type": "text/html"
+    });
+    res.end(`
+    <form enctype="multipart/form-data" method="POST" action="/">
+      <input type="file" name="upload-file" />
+      <button>Upload File</button>
+    </form>
+    `);
   }
 }).listen(3000, () => console.log("Server is running on port 3000"));
